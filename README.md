@@ -2,14 +2,14 @@
 
 <div align="center">
 
-[![Release](https://img.shields.io/badge/Release-v1.0.0-blue.svg?style=for-the-badge&logo=github)](https://github.com/Mountain013/FRHD-Track-Editor-/releases/tag/v1.0.0)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20(x64)-0078D6.svg?style=for-the-badge&logo=windows)](https://github.com/Mountain013/FRHD-Track-Editor-/releases/download/v1.0.0/Track.Studio.1.0.0.exe)
+[![Release](https://img.shields.io/badge/Release-v0.1-blue.svg?style=for-the-badge&logo=github)](https://github.com/Mountain013/FRHD-Track-Editor-/releases/tag/v0.1)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20(x64)-0078D6.svg?style=for-the-badge&logo=windows)](https://github.com/Mountain013/FRHD-Track-Editor-/releases/download/v0.1/Track.Studio.0.1.0.exe)
 [![Portal](https://img.shields.io/badge/Download_Portal-GitHub_Pages-2ea44f.svg?style=for-the-badge&logo=githubpages)](https://mountain013.github.io/FRHD-Track-Editor-/)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=for-the-badge)](LICENSE)
 
 **A professional, high-performance desktop editor and procedural generation studio for Free Rider HD.**
 
-[🌐 **Visit Download Portal (GitHub Pages)**](https://mountain013.github.io/FRHD-Track-Editor-/) • [⬇️ **Download Portable (.exe)**](https://github.com/Mountain013/FRHD-Track-Editor-/releases/download/v1.0.0/Track.Studio.1.0.0.exe) • [📦 **Releases**](https://github.com/Mountain013/FRHD-Track-Editor-/releases)
+[🌐 **Visit Download Portal (GitHub Pages)**](https://mountain013.github.io/FRHD-Track-Editor-/) • [⬇️ **Download Portable (.exe)**](https://github.com/Mountain013/FRHD-Track-Editor-/releases/download/v0.1/Track.Studio.0.1.0.exe) • [📦 **Releases**](https://github.com/Mountain013/FRHD-Track-Editor-/releases)
 
 <br/>
 
@@ -19,12 +19,12 @@
 
 ---
 
-## ⚡ Direct Downloads (v1.0.0)
+## ⚡ Direct Downloads (v0.1)
 
 | Package | Format | Size | Description | Download |
 | :--- | :--- | :--- | :--- | :--- |
-| **Windows Portable** | `.exe` | ~110 MB | Standalone single binary. No installation required; run from anywhere or a flash drive. | [**Download Portable**](https://github.com/Mountain013/FRHD-Track-Editor-/releases/download/v1.0.0/Track.Studio.1.0.0.exe) |
-| **Windows Installer** | `.exe` | ~121 MB | Standard NSIS installer with Desktop and Start Menu shortcuts. | [**Download Setup**](https://github.com/Mountain013/FRHD-Track-Editor-/releases/download/v1.0.0/Track.Studio.Setup.1.0.0.exe) |
+| **Windows Portable** | `.exe` | ~110 MB | Standalone single binary. No installation required; run from anywhere or a flash drive. | [**Download Portable**](https://github.com/Mountain013/FRHD-Track-Editor-/releases/download/v0.1/Track.Studio.0.1.0.exe) |
+| **Windows Installer** | `.exe` | ~121 MB | Standard NSIS installer with Desktop and Start Menu shortcuts. | [**Download Setup**](https://github.com/Mountain013/FRHD-Track-Editor-/releases/download/v0.1/Track.Studio.Setup.0.1.0.exe) |
 | **Web Download Portal** | Web | — | View full feature showcases, live screenshots, and download options in your browser. | [**Open Portal**](https://mountain013.github.io/FRHD-Track-Editor-/) |
 
 ---
