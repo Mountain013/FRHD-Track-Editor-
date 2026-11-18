@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Studio</title>
+    <link rel="icon" type="image/png" href="assets/icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=15">
+</head>
+<body>
+    <div id="sidebar" class="woodblock-panel">
+        <div class="sidebar-layout">
+            <!-- LEFT ICON TAB STRIP -->
+            <div id="sidebarTabStrip" class="sidebar-tab-strip">
+                <button class="side-tab-btn active" data-side-tab="panel-file" title="File (Load / Save / Export)">
+                    <span class="side-tab-icon"><svg class="mono-icon" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+                    <span class="side-tab-label">File</span>
+                </button>
+                <button class="side-tab-btn" data-side-tab="panel-layers" title="Layers (Physics, Scenery &amp; Reference)">
+                    <span class="side-tab-icon"><svg class="mono-icon" viewBox="0 0 24 24"><polygon points="12 3 21 8 12 13 3 8 12 3"/><polyline points="3 12.5 12 17.5 21 12.5"/><polyline points="3 17 12 22 21 17"/></svg></span>
+                    <span class="side-tab-label">Layers</span>
+                </button>
+                <button class="side-tab-btn" data-side-tab="panel-tools" title="Manual Mode (Drawing Tools)">
+                    <span class="side-tab-icon"><svg class="mono-icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+                    <span class="side-tab-label">Manual</span>
+                </button>
+                <button class="side-tab-btn" data-side-tab="panel-hybrid" title="Hybrid Mode (Tube / Fill / Gradient / Text)">
+                    <span class="side-tab-icon"><svg class="mono-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/><path d="M10 6.5h4a3.5 3.5 0 0 1 3.5 3.5v4"/><path d="M6.5 10v4a3.5 3.5 0 0 0 3.5 3.5h4"/></svg></span>
+                    <span class="side-tab-label">Hybrid</span>
+                </button>
+                <button class="side-tab-btn" data-side-tab="panel-auto" title="Automation Mode (Generators / Optimizer / Masks)">
+                    <span class="side-tab-icon"><svg class="mono-icon" viewBox="0 0 24 24"><polygon points="13 2 4 14 11 14 10 22 20 10 13 10 13 2"/></svg></span>
+                    <span class="side-tab-label">Auto</span>
+                </button>
+                <button class="side-tab-btn" data-side-tab="panel-camera" title="Camera &amp; Track Stats">
+                    <span class="side-tab-icon"><svg class="mono-icon" viewBox="0 0 24 24"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="8"/><line x1="18" y1="20" x2="18" y2="4"/></svg></span>
+                    <span class="side-tab-label">Stats</span>
+                </button>
+            </div>
+
+            <!-- RIGHT TAB CONTENT BODY -->
+            <div id="sidebarTabContent" class="sidebar-tab-content">
+                <div class="header-row">
+                    <h2>Track Studio</h2>
+                    <button id="sidebarToggleBtn" class="sidebar-toggle-btn" title="Collapse Sidebar (Ctrl+[)"><svg class="mono-icon-sm" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+                </div>
+                <div class="header-actions">
+                    <button id="zenBtn" class="icon-btn" title="Toggle Zen / Focus Mode (\)">Zen</button>
+                    <button id="objectsBtn" class="icon-btn" title="Object Database">Objects</button>
+                    <button id="helpBtn" class="icon-btn" title="Help / Shortcuts (?)">Help</button>
+                    <button id="settingsBtn" class="icon-btn" title="Settings">Settings</button>
+                </div>
+
+                <!-- TAB 1: FILE -->
+                <div id="panel-file" class="side-panel active">
+                    <h3 class="side-panel-title">File</h3>
+                    <label>Load Track (.txt):</label>
+                    <input type="file" id="fileInput" accept=".txt">
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button id="exportBtn" class="primary-btn" style="flex: 1;">Export</button>
+                        <button id="resetSceneryBtn" class="danger-btn" style="flex: 1;">Reset</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button id="validateBtn" class="primary-btn" style="flex: 1;">Validate</button>
+                        <button id="savePngBtn" class="primary-btn" style="flex: 1;">Save PNG</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button id="undoBtn" class="primary-btn" style="flex: 1;" title="Undo (Ctrl+Z)" disabled>Undo</button>
+                        <button id="redoBtn" class="primary-btn" style="flex: 1;" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>
+                    </div>
+                    <div id="recentTracksSection" style="margin-top: 12px; display: none;">
+                        <label style="font-size: 0.8rem; margin-bottom: 4px;">Recent Tracks:</label>
+                        <div id="recentTracksList" class="recent-tracks-list"></div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: LAYERS -->
+                <div id="panel-layers" class="side-panel">
+                    <h3 class="side-panel-title">Layers</h3>
+                    <div class="layer-item" data-layer="physics">
+                        <div class="layer-item-left">
+                            <span class="layer-color-dot physics"></span>
+                            <span class="layer-title">Physics</span>
+                        </div>
+                        <div class="layer-item-actions">
+                            <button class="layer-action-btn active" id="layerVisPhysics" title="Toggle Physics Visibility"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/></svg></button>
+                            <button class="layer-action-btn" id="layerLockPhysics" title="Lock Physics Layer"><svg class="mono-icon-sm" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.7-1.5"/></svg></button>
+                        </div>
+                    </div>
+                    <div class="layer-item" data-layer="scenery">
+                        <div class="layer-item-left">
+                            <span class="layer-color-dot scenery"></span>
+                            <span class="layer-title">Scenery</span>
+                        </div>
+                        <div class="layer-item-actions">
+                            <button class="layer-action-btn active" id="layerVisScenery" title="Toggle Scenery Visibility"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/></svg></button>
+                            <button class="layer-action-btn" id="layerLockScenery" title="Lock Scenery Layer"><svg class="mono-icon-sm" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.7-1.5"/></svg></button>
+                        </div>
+                    </div>
+                    <div class="param-row" style="margin-top: 10px;">
+                        <label>Scenery Opacity: <span id="sceneryOpacityVal">100</span>%</label>
+                        <input type="range" id="sceneryOpacity" min="10" max="100" step="5" value="100">
+                    </div>
+                    <div class="param-row active-draw-layer-row" style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <label for="drawLayerSelect" style="white-space: nowrap; margin-bottom: 0; font-size: 0.8rem;">Active Draw Layer:</label>
+                        <select id="drawLayerSelect" style="margin-bottom: 0; flex: 1; min-width: 0; padding: 5px 8px; font-size: 0.78rem;">
+                            <option value="physics">Physics (Black)</option>
+                            <option value="scenery">Scenery (Gray)</option>
+                        </select>
+                    </div>
+
+                    <div class="divider" style="margin: 15px 0;"></div>
+
+                    <!-- REFERENCE IMAGE OVERLAY -->
+                    <h3 class="side-panel-title">Reference Image</h3>
+                    <div class="layer-item" data-layer="reference">
+                        <div class="layer-item-left">
+                            <span class="layer-color-dot" style="background: var(--accent-orange);"></span>
+                            <span class="layer-title">Ref Image</span>
+                        </div>
+                        <div class="layer-item-actions">
+                            <button class="layer-action-btn active" id="refImgVisBtn" title="Toggle Reference Image Visibility"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/></svg></button>
+                            <button class="layer-action-btn" id="refImgLockBtn" title="Lock Reference Image Position"><svg class="mono-icon-sm" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.7-1.5"/></svg></button>
+                        </div>
+                    </div>
+                    <input type="file" id="refImgInput" accept="image/*" style="margin-top: 6px; font-size: 0.72rem;">
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <button id="refImgDragBtn" class="primary-btn" title="Drag Reference Image on Canvas" style="flex: 1; padding: 6px; font-size: 0.72rem;" disabled>Drag</button>
+                        <button id="refImgCenterBtn" class="primary-btn" style="flex: 1; padding: 6px; font-size: 0.72rem;" disabled>Center</button>
+                        <button id="refImgClearBtn" class="danger-btn" style="flex: 0.8; padding: 6px; font-size: 0.72rem;" disabled>Clear</button>
+                    </div>
+                    <div class="param-row">
+                        <label>Ref Opacity: <span id="refImgOpacityVal">45</span>%</label>
+                        <input type="range" id="refImgOpacity" min="5" max="100" step="5" value="45">
+                    </div>
+                    <div class="param-row">
+                        <label>Ref Scale: <span id="refImgScaleVal">1.00</span>×</label>
+                        <input type="range" id="refImgScale" min="0.1" max="5.0" step="0.05" value="1.0">
+                    </div>
+
+                    <div class="divider" style="margin: 15px 0;"></div>
+
+                    <!-- PERSPECTIVE GRID -->
+                    <h3 class="side-panel-title">Perspective Grid</h3>
+                    <div class="layer-item" data-layer="perspective">
+                        <div class="layer-item-left">
+                            <span class="layer-color-dot" style="background: var(--prussian);"></span>
+                            <span class="layer-title">Perspective</span>
+                        </div>
+                        <div class="layer-item-actions">
+                            <button class="layer-action-btn" id="perspVisBtn" title="Toggle Perspective Grid Visibility"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 18c-6.5 0-10-6-10-6a18.5 18.5 0 0 1 5.06-5.94"/><path d="M9.9 4.24A10.2 10.2 0 0 1 12 4c6.5 0 10 6 10 6a18.5 18.5 0 0 1-2.16 3.19"/><line x1="2" y1="2" x2="22" y2="22"/></svg></button>
+                            <button class="layer-action-btn" id="perspLockBtn" title="Lock Vanishing Points"><svg class="mono-icon-sm" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.7-1.5"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="param-row" style="margin-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <label for="perspModeSelect" style="white-space: nowrap; margin-bottom: 0; font-size: 0.78rem;">Type:</label>
+                        <select id="perspModeSelect" style="margin-bottom: 0; flex: 1; min-width: 0; padding: 5px 8px; font-size: 0.78rem;">
+                            <option value="1pt">1-Point</option>
+                            <option value="2pt" selected>2-Point</option>
+                            <option value="3pt">3-Point</option>
+                            <option value="iso">Isometric</option>
+                        </select>
+                    </div>
+
+                    <div class="param-row" style="margin-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <label for="perspSnapSelect" style="white-space: nowrap; margin-bottom: 0; font-size: 0.78rem;">Snap Mode:</label>
+                        <select id="perspSnapSelect" style="margin-bottom: 0; flex: 1; min-width: 0; padding: 5px 8px; font-size: 0.78rem;">
+                            <option value="none">No-Snap (Guide Only)</option>
+                            <option value="grid">Grid-Snap (Rays / Intersections)</option>
+                            <option value="angle" selected>Angle-Snap (Lock Toward VP)</option>
+                        </select>
+                    </div>
+
+                    <div class="param-row" id="perspAxisLockRow" style="margin-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <label for="perspAxisLockSelect" style="white-space: nowrap; margin-bottom: 0; font-size: 0.78rem;">Axis Lock:</label>
+                        <select id="perspAxisLockSelect" style="margin-bottom: 0; flex: 1; min-width: 0; padding: 5px 8px; font-size: 0.78rem;">
+                            <option value="auto" selected>Auto (Nearest Axis)</option>
+                            <option value="vp1">Lock Axis 1 (VP1 / +Iso)</option>
+                            <option value="vp2">Lock Axis 2 (VP2 / -Iso)</option>
+                            <option value="vp3">Lock Axis 3 (Vert / VP3)</option>
+                        </select>
+                    </div>
+
+                    <div class="param-row" id="perspSnapConeRow">
+                        <label>Snap Cone (Auto): <span id="perspSnapConeVal">12</span>°</label>
+                        <input type="range" id="perspSnapCone" min="5" max="25" step="1" value="12">
+                    </div>
+
+                    <div style="display: flex; gap: 5px; margin-top: 8px; margin-bottom: 8px;">
+                        <button id="perspEditBtn" class="primary-btn" title="Drag Vanishing Points on Canvas (Esc exits)" style="flex: 1.1; padding: 6px 4px; font-size: 0.7rem;">Edit VPs</button>
+                        <button id="perspLevelBtn" class="primary-btn" title="Level Horizon (Align VP1.Y = VP2.Y)" style="flex: 0.85; padding: 6px 4px; font-size: 0.7rem;">Level</button>
+                        <button id="perspCenterBtn" class="primary-btn" title="Center VPs on Current Camera" style="flex: 0.9; padding: 6px 4px; font-size: 0.7rem;">Center</button>
+                        <button id="perspResetBtn" class="danger-btn" title="Reset Vanishing Points" style="flex: 0.75; padding: 6px 4px; font-size: 0.7rem;">Reset</button>
+                    </div>
+
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; font-size: 0.78rem;">
+                        <input type="checkbox" id="perspFollowCamToggle" style="width: auto; margin: 0;">
+                        Follow Camera Horizon
+                    </label>
+
+                    <div class="woodblock-inset" style="padding: 8px; margin-bottom: 8px;">
+                        <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 6px;">
+                            <select id="perspPresetSelect" style="flex: 1; min-width: 0; margin: 0; padding: 4px 6px; font-size: 0.72rem;"></select>
+                            <button id="perspDeleteBookmarkBtn" class="danger-btn" title="Delete Selected Bookmark" style="width: auto; margin: 0; padding: 4px 7px; font-size: 0.7rem; display: none;">Del</button>
+                        </div>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <input type="text" id="perspBookmarkName" placeholder="Bookmark name..." maxlength="30" style="flex: 1; min-width: 0; margin: 0; padding: 4px 6px; font-size: 0.72rem;">
+                            <button id="perspSaveBookmarkBtn" class="primary-btn" title="Save Current Grid Setup as Bookmark" style="width: auto; margin: 0; padding: 4px 8px; font-size: 0.7rem;">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="param-row" id="perspSpreadRow">
+                        <label>VP Spread: <span id="perspSpreadVal">900</span> px</label>
+                        <input type="range" id="perspSpread" min="200" max="3000" step="20" value="900">
+                    </div>
+
+                    <div class="param-row" id="perspIsoAngleRow" style="display:none;">
+                        <label>Iso Angle: <span id="perspIsoAngleVal">30</span>°</label>
+                        <input type="range" id="perspIsoAngle" min="10" max="60" step="1" value="30">
+                    </div>
+
+                    <div class="param-row">
+                        <label>Grid Density: <span id="perspDensityVal">16</span></label>
+                        <input type="range" id="perspDensity" min="6" max="36" step="2" value="16">
+                    </div>
+
+                    <div class="param-row">
+                        <label>Opacity: <span id="perspOpacityVal">45</span>%</label>
+                        <input type="range" id="perspOpacity" min="10" max="90" step="5" value="45">
+                    </div>
+
+                    <div id="perspCoordsBox" class="woodblock-inset" style="padding: 8px; margin-top: 6px; font-size: 0.72rem;">
+                        <div id="perspVp1Row" style="display: flex; align-items: center; gap: 4px; margin-bottom: 5px;">
+                            <span style="min-width: 28px; font-weight: 700;">VP1:</span>
+                            <input type="number" id="perspVp1X" step="10" value="-450" style="flex:1; margin:0; padding:3px 5px; font-size:0.72rem;">
+                            <input type="number" id="perspVp1Y" step="10" value="0" style="flex:1; margin:0; padding:3px 5px; font-size:0.72rem;">
+                        </div>
+                        <div id="perspVp2Row" style="display: flex; align-items: center; gap: 4px; margin-bottom: 5px;">
+                            <span style="min-width: 28px; font-weight: 700;">VP2:</span>
+                            <input type="number" id="perspVp2X" step="10" value="450" style="flex:1; margin:0; padding:3px 5px; font-size:0.72rem;">
+                            <input type="number" id="perspVp2Y" step="10" value="0" style="flex:1; margin:0; padding:3px 5px; font-size:0.72rem;">
+                        </div>
+                        <div id="perspVp3Row" style="display: none; align-items: center; gap: 4px;">
+                            <span style="min-width: 28px; font-weight: 700;">VP3:</span>
+                            <input type="number" id="perspVp3X" step="10" value="0" style="flex:1; margin:0; padding:3px 5px; font-size:0.72rem;">
+                            <input type="number" id="perspVp3Y" step="10" value="650" style="flex:1; margin:0; padding:3px 5px; font-size:0.72rem;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: MANUAL TOOLS -->
+                <div id="panel-tools" class="side-panel">
+                    <h3 class="side-panel-title">Manual</h3>
+                    <div id="manualTools">
+                        <div class="tool-grid" style="margin-top: 10px;">
+                            <button class="tool-btn active" data-tool="line" title="Standard Line (Q)">Line (Q)</button>
+                            <button class="tool-btn" data-tool="line+" title="Continuous Line (W)">Line+ (W)</button>
+                            <button class="tool-btn" data-tool="curve" title="Bézier Ramp / Curve (R)">Curve (R)</button>
+                            <button class="tool-btn" data-tool="bridge" title="Bridge Transition (B)">Bridge (B)</button>
+                            <button class="tool-btn" data-tool="brush" title="Brush (A)">Brush (A)</button>
+                            <button class="tool-btn" data-tool="eraser" title="Eraser (E)">Eraser (E)</button>
+                            <button class="tool-btn" data-tool="polygon" title="Polygon (P)">Polygon (P)</button>
+                            <button class="tool-btn" data-tool="circle" title="Circle (O)">Circle (O)</button>
+                            <button class="tool-btn" data-tool="box" title="Perspective Box (U)">Box (U)</button>
+                            <button class="tool-btn" data-tool="select" title="Box Select (S)">Select (S)</button>
+                            <button class="tool-btn" data-tool="modify" title="Modify Vertices (M)">Modify (M)</button>
+                        </div>
+
+                        <!-- Perspective Box tool settings -->
+                        <div id="boxSettings" class="manual-settings woodblock-inset" style="display:none; margin-top: 10px; margin-bottom: 10px;">
+                            <div class="param-row">
+                                <label>Box Edges:
+                                    <select id="boxFacesMode">
+                                        <option value="exterior" selected>Visible Exterior Faces</option>
+                                        <option value="wireframe">Full 3D Wireframe (12 edges)</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <p class="instruction-text" style="font-size: 0.75rem; margin-top: 6px; line-height: 1.4;">
+                                <b>Click 1:</b> Front anchor corner<br>
+                                <b>Click 2:</b> Front width &amp; height<br>
+                                <b>Click 3:</b> Depth along 2nd VP / Iso axis<br>
+                                <b>Esc / Right-click:</b> Cancel
+                            </p>
+                        </div>
+
+                        <div id="curveSettings" class="manual-settings woodblock-inset" style="display:none; margin-top: 10px; margin-bottom: 10px;">
+                            <div class="param-row">
+                                <label>Curve Smoothness: <span id="curveSegmentsVal">16</span> steps</label>
+                                <input type="range" id="curveSegments" min="4" max="64" step="2" value="16">
+                            </div>
+                            <p class="instruction-text" style="font-size: 0.75rem; margin-top: 6px;">
+                                <b>Click 1:</b> Ramp start point<br>
+                                <b>Click 2:</b> Ramp peak / arch control point<br>
+                                <b>Click 3:</b> Ramp landing point (bakes line)<br>
+                                <b>Esc / Right-click:</b> Cancel
+                            </p>
+                        </div>
+
+                        <!-- Eraser tool settings -->
+                        <div id="eraserSettings" class="manual-settings woodblock-inset" style="display:none; margin-top: 10px; margin-bottom: 10px;">
+                            <div class="param-row">
+                                <label>Eraser Radius: <span id="eraserRadiusVal">20</span> px</label>
+                                <input type="range" id="eraserRadius" min="4" max="150" step="1" value="20">
+                            </div>
+                            <div class="param-row" style="margin-top: 8px;">
+                                <label>Eraser Mode:
+                                    <select id="eraserMode">
+                                        <option value="original" selected>Original</option>
+                                        <option value="trim">Trim</option>
+                                        <option value="full">Full</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="param-row" style="margin-top: 8px;">
+                                <label>Target Layer:
+                                    <select id="eraserLayerTarget">
+                                        <option value="both" selected>Both (Unlocked)</option>
+                                        <option value="active">Active Draw Layer</option>
+                                        <option value="physics">Physics Only</option>
+                                        <option value="scenery">Scenery Only</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <p class="instruction-text" style="font-size: 0.75rem; margin-top: 8px; line-height: 1.4;">
+                                <b>Original:</b> Deletes the entire segment touched.<br>
+                                <b>Trim:</b> Deletes only what circle touches (clips line).<br>
+                                <b>Full:</b> Deletes segment and all connected lines.<br>
+                                <b>[ / ]:</b> Adjust radius &nbsp;·&nbsp; Drag to erase
+                            </p>
+                        </div>
+
+                        <!-- Bridge tool settings -->
+                        <div id="bridgeSettings" class="manual-settings woodblock-inset" style="display:none; margin-top: 10px; margin-bottom: 10px;">
+                            <div class="param-row">
+                                <label>Bridge Tension: <span id="bridgeTensionVal">1.0</span>×</label>
+                                <input type="range" id="bridgeTension" min="0.2" max="2.5" step="0.1" value="1.0">
+                            </div>
+                            <div class="param-row" style="margin-top: 8px;">
+                                <label>Bridge Steps: <span id="bridgeStepsVal">16</span></label>
+                                <input type="range" id="bridgeSteps" min="6" max="48" step="2" value="16">
+                            </div>
+                            <p class="instruction-text" style="font-size: 0.75rem; margin-top: 8px; line-height: 1.4;">
+                                <b>Click 1:</b> Select start track endpoint<br>
+                                <b>Click 2:</b> Select target endpoint<br>
+                                Matches incoming track angles for a seamless transition.<br>
+                                <b>Esc / Right-click:</b> Cancel
+                            </p>
+                        </div>
+
+                        <div id="polySidesRow" style="display:none; margin-top: 10px; margin-bottom: 10px;">
+                            <label>Polygon Sides: 
+                                <input type="number" id="polySides" value="6" min="3" max="50">
+                            </label>
+                        </div>
+
+                        <!-- Shared Pattern Slot (relocated dynamically between Manual & Hybrid tabs) -->
+                        <div id="manualPatternSlot">
+                        <!-- Line Pattern settings (visible for drawing tools) -->
+                        <div id="patternSettings" class="manual-settings woodblock-inset" style="margin-top: 10px;">
+                            <label>Line Type:
+                                <select id="lineType">
+                                    <option value="solid">Solid</option>
+                                    <option value="dashes">Dashes</option>
+                                    <option value="dots">Dots</option>
+                                    <option value="noisy">Noisy</option>
+                                </select>
+                            </label>
+
+                            <canvas id="patternPreview" class="pattern-preview-canvas" width="280" height="40"></canvas>
+
+                            <div class="param-row" style="margin-top: 10px;">
+                                <label>Min Stroke Length: <span id="minStrokeLenVal">0</span></label>
+                                <input type="range" id="minStrokeLen" min="0" max="200" step="5" value="0">
+                            </div>
+
+                            <div class="param-row" id="pointSpacingRow" style="display:none;">
+                                <label>Point Spacing: <span id="pointSpacingVal">8</span></label>
+                                <input type="range" id="pointSpacing" min="0" max="50" step="1" value="8">
+                            </div>
+
+                            <div class="param-row" id="patternScaleRow" style="display:none;">
+                                <label>Pattern Scale: <span id="patternScaleVal">1.00</span>×</label>
+                                <input type="range" id="patternScale" min="0.25" max="3" step="0.05" value="1">
+                            </div>
+
+                            <div class="param-row" id="noiseCoverageRow" style="display:none;">
+                                <label>Noise Coverage: <span id="noiseCoverageVal">50</span>%</label>
+                                <input type="range" id="noiseCoverage" min="0" max="100" step="1" value="50">
+                            </div>
+
+                            <div class="param-row" id="noiseSeedRow" style="display:none;">
+                                <label>Noise Seed: <span id="noiseSeedVal">42</span></label>
+                                <input type="range" id="noiseSeed" min="0" max="100" step="1" value="42">
+                            </div>
+
+                            <p class="instruction-text" style="margin-top: 6px; font-size: 0.75rem;">Hold <b>Alt</b> while drawing to force a solid stroke.<br>Press <b>L</b> to toggle active layer (Physics/Scenery).</p>
+                        </div>
+                        </div>
+
+                        <!-- Select tool settings -->
+                        <div id="selectSettings" class="manual-settings woodblock-inset" style="display:none; margin-top: 10px;">
+                            <label>Selection Layer:
+                                <select id="selLayerSelect">
+                                    <option value="physics">Physics</option>
+                                    <option value="scenery">Scenery</option>
+                                    <option value="both" selected>Both</option>
+                                </select>
+                            </label>
+                            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                <button id="selDeleteBtn" class="danger-btn" disabled style="flex:1;">Delete</button>
+                                <button id="selCopyBtn" class="primary-btn" disabled style="flex:1;">Copy</button>
+                            </div>
+                            <button id="selSaveObjBtn" class="accent-btn" disabled style="margin-top: 8px;">Save as Object</button>
+
+                            <div class="divider" style="margin: 10px 0;"></div>
+                            <div class="param-row">
+                                <label><span>Rotate:</span> <span><span id="selRotateVal">0</span>°</span></label>
+                                <input type="range" id="selRotateRange" min="-180" max="180" step="5" value="0">
+                                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                                    <button id="selRotM90Btn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.72rem;">-90°</button>
+                                    <button id="selRotApplyBtn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.72rem;">Rotate</button>
+                                    <button id="selRotP90Btn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.72rem;">+90°</button>
+                                </div>
+                            </div>
+                            <div class="param-row">
+                                <label><span>Scale:</span> <span><span id="selScaleVal">1.00</span>×</span></label>
+                                <input type="range" id="selScaleRange" min="0.25" max="3.0" step="0.05" value="1.0">
+                                <button id="selScaleApplyBtn" class="primary-btn" disabled style="margin-top: 4px; padding:5px; font-size:0.72rem;">Apply Scale</button>
+                            </div>
+                            <div style="display: flex; gap: 6px; margin-top: 6px;">
+                                <button id="selFlipXBtn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.72rem;">Flip X</button>
+                                <button id="selFlipYBtn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.72rem;">Flip Y</button>
+                            </div>
+                            <div style="display: flex; gap: 6px; margin-top: 6px;">
+                                <button id="selToPhysicsBtn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.7rem;">→ Physics</button>
+                                <button id="selToSceneryBtn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.7rem;">→ Scenery</button>
+                            </div>
+
+                            <div class="divider" style="margin: 10px 0;"></div>
+                            <div class="param-row">
+                                <label><span>Perspective Taper / Skew:</span> <span><span id="selPerspSkewVal">0</span>%</span></label>
+                                <input type="range" id="selPerspSkewRange" min="-70" max="70" step="5" value="0">
+                                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                                    <button id="selPerspSkewBtn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.7rem;" title="Apply trapezoid/shear taper">Skew</button>
+                                    <button id="selProjVp1Btn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.7rem;" title="Project toward Vanishing Point 1">→ VP1</button>
+                                    <button id="selProjVp2Btn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.7rem;" title="Project toward Vanishing Point 2">→ VP2</button>
+                                </div>
+                            </div>
+
+                            <div class="divider" style="margin: 10px 0;"></div>
+                            <div class="param-row">
+                                <label><span>Extrude Depth:</span> <span><span id="selExtrudeDepthVal">60</span> px</span></label>
+                                <input type="range" id="selExtrudeDepth" min="10" max="300" step="5" value="60">
+                                <div style="display: flex; gap: 5px; margin-top: 4px;">
+                                    <button id="selExtrudeVp1Btn" class="primary-btn" disabled style="flex:1; padding:5px 3px; font-size:0.68rem;" title="Extrude 3D depth toward VP1">Ext VP1</button>
+                                    <button id="selExtrudeVp2Btn" class="primary-btn" disabled style="flex:1; padding:5px 3px; font-size:0.68rem;" title="Extrude 3D depth toward VP2">Ext VP2</button>
+                                    <button id="selExtrudeVp3Btn" class="primary-btn" disabled style="flex:1; padding:5px 3px; font-size:0.68rem;" title="Extrude toward VP3 / Vert / Iso">Ext 3/Iso</button>
+                                </div>
+                            </div>
+
+                            <div class="divider" style="margin: 10px 0;"></div>
+                            <div class="param-row">
+                                <label><span>Persp Array:</span> <span><span id="selArrayCountVal">4</span>× · <span id="selArrayStepVal">40</span>%</span></label>
+                                <div style="display: flex; gap: 6px;">
+                                    <input type="range" id="selArrayCount" min="2" max="12" step="1" value="4" style="flex:1;">
+                                    <input type="range" id="selArrayStep" min="15" max="90" step="5" value="40" style="flex:1;">
+                                </div>
+                                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                                    <button id="selArrayVp1Btn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.7rem;" title="Duplicate with 1/z foreshortening toward VP1">Array → VP1</button>
+                                    <button id="selArrayVp2Btn" class="primary-btn" disabled style="flex:1; padding:5px; font-size:0.7rem;" title="Duplicate with 1/z foreshortening toward VP2">Array → VP2</button>
+                                </div>
+                            </div>
+
+                            <p class="instruction-text" style="margin-top: 8px; font-size: 0.78rem;">
+                                Drag inside selection to move · Drag empty space to select.<br>
+                                <b>Ctrl/Cmd+drag</b> add &nbsp;·&nbsp; <b>Shift+drag</b> subtract<br>
+                                <b>Esc</b> clear &nbsp;·&nbsp; <b>Delete</b> remove selection
+                            </p>
+                        </div>
+
+                        <p class="instruction-text">
+                            <b>Left click:</b> Draw/Add node/Confirm<br>
+                            <b>Right click:</b> Finish line (Line+) / Context Menu<br>
+                            <b>Middle click / Space:</b> Pan camera<br>
+                            <b>Hold Shift:</b> Snap to nearest track point
+                        </p>
+                    </div>
+                </div>
+
+                <!-- TAB 4: HYBRID TOOLS -->
+                <div id="panel-hybrid" class="side-panel">
+                    <h3 class="side-panel-title">Hybrid</h3>
+                    <div id="hybridTools">
+                        <div class="tool-grid" style="margin-top: 10px;">
+                            <button class="tool-btn" data-tool="tube" title="Tube Generator (T)">Tube (T)</button>
+                            <button class="tool-btn" data-tool="fill" title="Fill Area (F)">Fill (F)</button>
+                            <button class="tool-btn" data-tool="gradient" title="Gradient Shading (G)">Gradient (G)</button>
+                            <button class="tool-btn" data-tool="text" title="Text to Lines (X)">Text (X)</button>
+                            <button class="tool-btn" data-tool="rockBrush" title="Rock Brush (K)">Rocks (K)</button>
+                        </div>
+
+                        <!-- Tube tool settings -->
+                        <div id="tubeSettings" class="manual-settings woodblock-inset" style="display:none; margin-top: 10px; margin-bottom: 10px;">
+                            <div class="param-row">
+                                <label>Tube Width: <span id="tubeWidthVal">60</span> units</label>
+                                <input type="range" id="tubeWidth" min="20" max="160" step="5" value="60">
+                            </div>
+                            <label style="display: flex; align-items: center; gap: 8px; margin-top: 8px; cursor: pointer;">
+                                <input type="checkbox" id="tubeJitterToggle" checked style="width: auto; margin: 0;">
+                                <b>Wall Jitter (±5 units)</b>
+                            </label>
+                            <div class="param-row" id="tubeJitterRow" style="margin-top: 6px;">
+                                <label>Jitter Amount: <span id="tubeJitterVal">5</span> px</label>
+                                <input type="range" id="tubeJitter" min="1" max="15" step="1" value="5">
+                            </div>
+                            <p class="instruction-text" style="font-size: 0.75rem; margin-top: 8px; line-height: 1.4;">
+                                Draw center spine line. On finish, turns into dual unbroken tunnel walls.<br>
+                                <b>Left click:</b> Add node &nbsp;·&nbsp; <b>Right click:</b> Finish tube<br>
+                                <b>Esc:</b> Cancel
+                            </p>
+                        </div>
+
+                        <!-- Fill tool settings -->
+                        <div id="fillSettings" class="manual-settings woodblock-inset" style="display:none; margin-top: 10px; margin-bottom: 10px;">
+                            <div class="param-row">
+                                <label>Fill Mode:
+                                    <select id="fillMode">
+                                        <option value="full" selected>Full (Solid Fill)</option>
+                                        <option value="grid">Grid Pattern</option>
+                                        <option value="lines">Lines Pattern</option>
+                                    </select>
+                                </label>
+                            </div>
+
+                            <!-- Density row -->
+                            <div class="param-row" id="fillDensityRow" style="margin-top: 8px;">
+                                <label><span id="fillDensityLabel">Fill Spacing (Solid):</span> <span><span id="fillDensityVal">3</span> px</span></label>
+                                <input type="range" id="fillDensity" min="1" max="80" step="1" value="3">
+                            </div>
+
+                            <!-- Rotation row (grid & lines) -->
+                            <div class="param-row" id="fillRotationRow" style="display:none; margin-top: 8px;">
+                                <label><span>Rotation:</span> <span><span id="fillRotationVal">0</span>°</span></label>
+                                <input type="range" id="fillRotation" min="-180" max="180" step="5" value="0">
+                            </div>
+
+                            <!-- Slant row (grid & lines) -->
+                            <div class="param-row" id="fillSlantRow" style="display:none; margin-top: 8px;">
+                                <label><span>Slant:</span> <span><span id="fillSlantVal">0</span>°</span></label>
+                                <input type="range" id="fillSlant" min="-60" max="60" step="1" value="0">
+                            </div>
+
+                            <!-- Perspective hatch axis (grid & lines) -->
+                            <div class="param-row" id="fillPerspAxisRow" style="display:none; margin-top: 8px;">
+                                <label>Perspective Hatch:
+                                    <select id="fillPerspAxis">
+                                        <option value="none" selected>Standard Angle</option>
+                                        <option value="vp1">Converge Toward VP1</option>
+                                        <option value="vp2">Converge Toward VP2</option>
+                                        <option value="vp3">Vertical / VP3</option>
+                                        <option value="iso">Isometric Axis</option>
+                                    </select>
+                                </label>
+                            </div>
+
+                            <p class="instruction-text" style="font-size: 0.75rem; margin-top: 8px; line-height: 1.4;">
+                                Click inside any closed shape to fill.<br>
+                                <b>Full:</b> Solid dense line fill &nbsp;·&nbsp; <b>Grid:</b> Intersecting mesh<br>
+                                <b>Lines:</b> Parallel angled hatching &nbsp;·&nbsp; Works with all shape sizes
+                            </p>
+                        </div>
+
+                        <!-- Gradient tool settings -->
+                        <div id="gradientSettings" class="manual-settings woodblock-inset" style="display:none; margin-top: 10px; margin-bottom: 10px;">
+                            <div class="param-row">
+                                <label>Gradient Type:
+                                    <select id="gradType">
+                                        <option value="linear" selected>Linear (Drag Vector)</option>
+                                        <option value="radial">Radial (Center)</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="param-row" style="margin-top: 6px;">
+                                <label>Render Style:
+                                    <select id="gradStyle">
+                                        <option value="lines" selected>Progressive Lines</option>
+                                        <option value="broken">Broken / Dashed Fade</option>
+                                        <option value="stipple">Stipple Shading</option>
+                                        <option value="cross">Cross-Hatch Fade</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="param-row" style="margin-top: 6px;">
+                                <label><span>Start Spacing:</span> <span><span id="gradStartSpacingVal">3</span> px</span></label>
+                                <input type="range" id="gradStartSpacing" min="1" max="20" step="1" value="3">
+                            </div>
+                            <div class="param-row">
+                                <label><span>End Spacing:</span> <span><span id="gradEndSpacingVal">45</span> px</span></label>
+                                <input type="range" id="gradEndSpacing" min="15" max="120" step="5" value="45">
+                            </div>
+                            <div class="param-row">
+                                <label>Falloff Curve:
+                                    <select id="gradFalloff">
+                                        <option value="easeOut" selected>Ease Out (Fast fade)</option>
+                                        <option value="linear">Linear</option>
+                                        <option value="easeIn">Ease In (Heavy shadow)</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="param-row" style="margin-top: 6px;">
+                                <label>Boundary Mode:
+                                    <select id="gradClipMode">
+                                        <option value="auto" selected>Auto-Clip Inside Shape</option>
+                                        <option value="free">Free Unclipped Span</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="param-row" id="gradSpanWidthRow" style="margin-top: 6px;">
+                                <label><span>Free Span Width:</span> <span><span id="gradSpanWidthVal">220</span> px</span></label>
+                                <input type="range" id="gradSpanWidth" min="40" max="600" step="10" value="220">
+                            </div>
+                            <div class="param-row" style="margin-top: 6px;">
+                                <label>Perspective Align:
+                                    <select id="gradPerspAxis">
+                                        <option value="none" selected>Standard (Perpendicular)</option>
+                                        <option value="vp1">Converge Toward VP1</option>
+                                        <option value="vp2">Converge Toward VP2</option>
+                                        <option value="vp3">Vertical / VP3</option>
+                                        <option value="iso">Isometric Axis</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <label style="display: flex; align-items: center; gap: 8px; margin-top: 6px; cursor: pointer;">
+                                <input type="checkbox" id="gradInvertToggle" style="width: auto; margin: 0;">
+                                <b>Invert Gradient (0% → 100%)</b>
+                            </label>
+                            <p class="instruction-text" style="font-size: 0.75rem; margin-top: 8px; line-height: 1.4;">
+                                Drag from dense start to faded end.<br>
+                                Auto-clips inside closed shapes, or fades freely in open space.<br>
+                                <b>Esc / Right-click:</b> Cancel
+                            </p>
+                        </div>
+
+                        <!-- Text-to-Lines tool settings -->
+                        <div id="textSettings" class="manual-settings woodblock-inset" style="display:none; margin-top: 10px; margin-bottom: 10px;">
+                            <div class="param-row">
+                                <label>Text Content:</label>
+                                <input type="text" id="textToolValue" value="TRACK" maxlength="40" placeholder="Enter track text...">
+                            </div>
+                            <div class="param-row">
+                                <label><span>Text Size:</span> <span><span id="textToolSizeVal">48</span> px</span></label>
+                                <input type="range" id="textToolSize" min="12" max="200" step="2" value="48">
+                            </div>
+                            <div class="param-row">
+                                <label><span>Letter Spacing:</span> <span><span id="textToolSpacingVal">1.15</span>×</span></label>
+                                <input type="range" id="textToolSpacing" min="0.8" max="2.0" step="0.05" value="1.15">
+                            </div>
+                            <div class="param-row">
+                                <label>Font Style:
+                                    <select id="textToolStyle">
+                                        <option value="stroke" selected>Single-Stroke Vector</option>
+                                        <option value="bold">Bold Double-Stroke</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <p class="instruction-text" style="font-size: 0.75rem; margin-top: 6px; line-height: 1.4;">
+                                Move cursor to position ghost preview.<br>
+                                <b>Left click:</b> Stamp text as FRHD lines<br>
+                                <b>Hold Shift:</b> Snap anchor
+                            </p>
+                        </div>
+
+                        <div id="hybridPatternSlot"></div>
+
+                        <p class="instruction-text" style="margin-top: 10px;">
+                            <b>Hybrid Mode:</b> Smart assistive tools combining user strokes with procedural generation.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- TAB 5: AUTOMATION MODE -->
+                <div id="panel-auto" class="side-panel">
+                    <h3 class="side-panel-title">Automation</h3>
+                    <div id="autoModeUI">
+                        <div class="tabs" id="tabNav" style="margin-top: 10px;">
+                            <button class="tab-btn active" data-target="tab-generators">Generators</button>
+                            <button class="tab-btn" data-target="tab-optimizer">Optimizer</button>
+                            <button class="tab-btn" data-target="tab-masks" title="Mask Tools">Masks</button>
+                        </div>
+
+                        <div id="tab-generators" class="tab-content active">
+                            <label>Select Script:</label>
+                            <select id="scriptSelect">
+                                <option value="cleaner">Texture Cleaner</option>
+                                <option value="circle">Circle Generator</option>
+                                <option value="cave">Cave Generator</option>
+                                <option value="rocks">Rock Cluster Generator</option>
+                                <option value="edgeShadow">Edge-Hugging Shadow</option>
+                                <option value="perspShadow">Perspective Shadow</option>
+                                <option value="vectorizer">Image Vectorizer</option>
+                                <option value="rollers">Rhythm Rollers Generator</option>
+                            </select>
+
+                            <div id="scriptParams" style="margin-top: 15px;"></div>
+
+                            <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="liveUpdate" style="width: auto; margin: 0;" checked>
+                                <label for="liveUpdate" style="margin: 0; cursor: pointer;">Live Update</label>
+                            </div>
+
+                            <button id="runScriptBtn" class="accent-btn" style="margin-top: 15px;">Run Script</button>
+                            <button id="applySceneryBtn" class="primary-btn">Apply to Track</button>
+
+                            <div class="divider"></div>
+
+                            <div>
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="useMaskToggle" style="width: auto; margin: 0;">
+                                    Use Mask in Generation
+                                </label>
+                                
+                                <div id="maskFilterContainer" class="mask-filters">
+                                    <label title="Green Mask"><input type="checkbox" class="mask-filter" value="green" checked> <div class="swatch-btn green"></div></label>
+                                    <label title="Blue Mask"><input type="checkbox" class="mask-filter" value="blue" checked> <div class="swatch-btn blue"></div></label>
+                                    <label title="Purple Mask"><input type="checkbox" class="mask-filter" value="purple" checked> <div class="swatch-btn purple"></div></label>
+                                    <label title="Red Mask"><input type="checkbox" class="mask-filter" value="red" checked> <div class="swatch-btn red"></div></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="tab-optimizer" class="tab-content">
+                            <p class="instruction-text" style="margin-top:0; margin-bottom: 12px;">Optimize line counts and weld loose gaps to prevent bike snagging.</p>
+
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="optSimplifyToggle" checked style="width:auto; margin:0;">
+                                <b>RDP Line Simplifier</b>
+                            </label>
+                            <div class="param-row" id="optToleranceRow">
+                                <label>Tolerance: <span id="optToleranceVal">1.5</span> px</label>
+                                <input type="range" id="optTolerance" min="0.5" max="8.0" step="0.25" value="1.5">
+                            </div>
+
+                            <div class="divider" style="margin: 10px 0;"></div>
+
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="optGapWeldToggle" checked style="width:auto; margin:0;">
+                                <b>Gap Welder (Snag Fixer)</b>
+                            </label>
+                            <div class="param-row" id="optGapDistanceRow">
+                                <label>Weld Max Distance: <span id="optGapDistanceVal">2.5</span> px</label>
+                                <input type="range" id="optGapDistance" min="1.0" max="10.0" step="0.5" value="2.5">
+                            </div>
+
+                            <div class="divider" style="margin: 10px 0;"></div>
+
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 12px;">
+                                <input type="checkbox" id="optPurgeMicroToggle" checked style="width:auto; margin:0;">
+                                Purge Micro-lines (&lt;1px) &amp; Duplicates
+                            </label>
+
+                            <div class="divider" style="margin: 10px 0;"></div>
+
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="optSmoothToggle" style="width:auto; margin:0;">
+                                <b>Smart Track Smoother (Chaikin)</b>
+                            </label>
+                            <div class="param-row" id="optSmoothPassesRow">
+                                <label>Smooth Passes: <span id="optSmoothPassesVal">2</span> iterations</label>
+                                <input type="range" id="optSmoothPasses" min="1" max="4" step="1" value="2">
+                            </div>
+
+                            <label>Target Layer:
+                                <select id="optTargetLayer">
+                                    <option value="both" selected>Both Physics &amp; Scenery</option>
+                                    <option value="physics">Physics lines only</option>
+                                    <option value="scenery">Scenery lines only</option>
+                                </select>
+                            </label>
+
+                            <button id="runOptimizerBtn" class="accent-btn" style="margin-top: 15px;">Analyze &amp; Optimize</button>
+
+                            <div id="optimizerResultBox" class="woodblock-inset" style="display:none; margin-top: 12px; padding: 10px; font-size: 0.85rem;">
+                                <div id="optimizerResultContent"></div>
+                                <button id="applyOptimizerBtn" class="primary-btn" style="margin-top: 10px; width: 100%;">Apply Optimization</button>
+                            </div>
+                        </div>
+
+                        <div id="tab-masks" class="tab-content">
+                            <div style="margin-bottom: 10px;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="maskModeToggle" style="width: auto; margin: 0;">
+                                    Enable Mask Mode (Stop Camera)
+                                </label>
+                            </div>
+                            
+                            <label>Paint Color:</label>
+                            <div class="color-picker">
+                                <input type="radio" name="maskColor" value="green" id="col_green" checked>
+                                <label for="col_green" class="swatch green"></label>
+                                <input type="radio" name="maskColor" value="blue" id="col_blue">
+                                <label for="col_blue" class="swatch blue"></label>
+                                <input type="radio" name="maskColor" value="purple" id="col_purple">
+                                <label for="col_purple" class="swatch purple"></label>
+                                <input type="radio" name="maskColor" value="red" id="col_red">
+                                <label for="col_red" class="swatch red"></label>
+                                <input type="radio" name="maskColor" value="eraser" id="col_eraser">
+                                <label for="col_eraser" class="swatch eraser">E</label>
+                            </div>
+                            
+                            <div class="param-row" style="margin-top: 10px;">
+                                <label>Tool: <span id="toolVal">Brush</span></label>
+                                <select id="maskToolSelect">
+                                    <option value="brush">Brush</option>
+                                    <option value="fill">Flood Fill</option>
+                                </select>
+                            </div>
+
+                            <div class="param-row" id="brushSizeRow" style="display: block;">
+                                <label>Brush Size: <span id="brushSizeVal">20</span></label>
+                                <input type="range" id="brushSize" min="4" max="100" step="1" value="20">
+                            </div>
+
+                            <button id="clearMaskBtn" class="danger-btn" style="margin-top: 15px;">Clear Mask</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: CAMERA & STATS -->
+                <div id="panel-camera" class="side-panel">
+                    <h3 class="side-panel-title">Camera &amp; Stats</h3>
+                    <label style="margin-top: 10px;">Zoom: <span id="zoomVal">0.50</span>x</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <button id="fitViewBtn" class="primary-btn" style="flex: 1;">Fit to View</button>
+                        <button id="resetViewBtn" class="primary-btn" style="flex: 1;">Reset Camera</button>
+                    </div>
+                    <div class="divider" style="margin: 15px 0;"></div>
+                    <h3 class="side-panel-title">Stats</h3>
+                    <p class="mono-text">Physics Lines: <span id="statPhysics">0</span></p>
+                    <p class="mono-text">Scenery Lines: <span id="statScenery">0</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="canvas-container">
+        <canvas id="trackCanvas"></canvas>
+        <div id="patternHud" class="pattern-hud" style="display:none;"></div>
+        <div id="previewBadge" class="preview-badge" style="display:none;">Preview — not applied</div>
+        <div id="selectionPill" class="selection-pill" style="display:none;">
+            <span id="selectionPillText">0 selected</span>
+            <button id="selectionPillClear" title="Clear (Esc)">×</button>
+        </div>
+
+        <!-- FLOATING CANVAS HUD TOOLBAR (QUICK ACCESS) -->
+        <div id="canvasHud" class="canvas-floating-hud">
+            <button class="hud-btn hud-icon-btn" id="hudUndoBtn" title="Undo (Ctrl+Z)" disabled><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+            <button class="hud-btn hud-icon-btn" id="hudRedoBtn" title="Redo (Ctrl+Shift+Z)" disabled><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+            <div class="hud-sep"></div>
+
+            <!-- MANUAL TOOLS GROUP -->
+            <div id="hudManualGroup" class="hud-group">
+                <button class="hud-btn active" data-hud-tool="line" title="Line (Q)">Line</button>
+                <button class="hud-btn" data-hud-tool="line+" title="Line+ (W)">Line+</button>
+                <button class="hud-btn" data-hud-tool="curve" title="Curve / Ramp (R)">Curve</button>
+                <button class="hud-btn" data-hud-tool="bridge" title="Bridge Transition (B)">Bridge</button>
+                <button class="hud-btn" data-hud-tool="brush" title="Brush (A)">Brush</button>
+                <button class="hud-btn" data-hud-tool="eraser" title="Eraser (E)">Eraser</button>
+                <button class="hud-btn" data-hud-tool="polygon" title="Polygon (P)">Poly</button>
+                <button class="hud-btn" data-hud-tool="circle" title="Circle (O)">Circle</button>
+                <button class="hud-btn" data-hud-tool="box" title="Perspective Box (U)">Box</button>
+                <button class="hud-btn" data-hud-tool="select" title="Select (S)">Select</button>
+                <button class="hud-btn" data-hud-tool="modify" title="Modify (M)">Modify</button>
+            </div>
+
+            <!-- HYBRID TOOLS GROUP -->
+            <div id="hudHybridGroup" class="hud-group" style="display:none;">
+                <button class="hud-btn" data-hud-tool="tube" title="Tube Generator (T)">Tube</button>
+                <button class="hud-btn" data-hud-tool="fill" title="Fill Area (F)">Fill</button>
+                <button class="hud-btn" data-hud-tool="gradient" title="Gradient Shading (G)">Grad</button>
+                <button class="hud-btn" data-hud-tool="text" title="Text to Lines (X)">Text</button>
+                <button class="hud-btn" data-hud-tool="rockBrush" title="Rock Brush (K)">Rocks</button>
+            </div>
+
+            <!-- AUTOMATION / GENERATOR TOOLS GROUP -->
+            <div id="hudAutoGroup" class="hud-group" style="display:none;">
+                <button class="hud-btn hud-action-btn" data-hud-action="cave" id="hudBtnCave" title="Cave Texture: Generate and apply cave scenery">Cave</button>
+                <button class="hud-btn hud-action-btn" data-hud-action="circle" id="hudBtnCircle" title="Circle Texture: Generate and apply circle texture">Circle</button>
+                <button class="hud-btn hud-action-btn" data-hud-action="rocks" id="hudBtnRocks" title="Rock Cluster: Procedural overlapping rock mounds">Rocks</button>
+                <button class="hud-btn hud-action-btn" data-hud-action="edgeShadow" id="hudBtnEdgeShadow" title="Edge-Hugging Shadow: Inward bevel shadow inside closed shapes">Shadow</button>
+                <button class="hud-btn hud-action-btn" data-hud-action="smooth" id="hudBtnSmooth" title="Smooth Lines: Chaikin corner-cutting smoothing">Smooth</button>
+                <button class="hud-btn hud-action-btn" data-hud-action="fill-gaps" id="hudBtnFillGaps" title="Fill Gaps: Snag-weld loose track endpoints">Fill Gaps</button>
+                <button class="hud-btn hud-action-btn" data-hud-action="reduce" id="hudBtnReduce" title="Reduce Line Count: Purge micro-lines and simplify">Reduce</button>
+                <button class="hud-btn hud-action-btn" data-hud-action="rollers" id="hudBtnRollers" title="Line Generator: Generate and append Rhythm Rollers">Rollers</button>
+            </div>
+
+            <div class="hud-sep"></div>
+            <button class="hud-btn hud-layer-btn" id="hudLayerBtn" title="Switch Layer (L)">
+                <span id="hudLayerDot" class="hud-dot physics"></span>
+                <span id="hudLayerText">Physics</span>
+            </button>
+            <button class="hud-btn hud-mode-btn" id="hudModeBtn" title="Rotate Mode: Manual → Hybrid → Automation">
+                <span id="hudModeText">Manual</span>
+            </button>
+            <div class="hud-sep"></div>
+            <button class="hud-btn" id="hudZenBtn" title="Toggle Zen Mode (\)">Zen</button>
+        </div>
+
+        <!-- FLOATING TOOL OPTIONS BAR (CONTEXT-SENSITIVE) -->
+        <div id="toolOptionsBar" class="tool-options-bar" style="display:none;"></div>
+
+        <!-- CANVAS CONTEXT MENU (RIGHT-CLICK) -->
+        <div id="canvasContextMenu" class="canvas-context-menu" style="display:none;">
+            <div class="context-menu-item" data-action="undo"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></span> Undo <span class="context-menu-key">Ctrl+Z</span></div>
+            <div class="context-menu-item" data-action="redo"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></span> Redo <span class="context-menu-key">Ctrl+Y</span></div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item" data-action="toggle-layer"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><polygon points="12 3 21 8 12 13 3 8 12 3"/><polyline points="3 12.5 12 17.5 21 12.5"/><polyline points="3 17 12 22 21 17"/></svg></span> Switch Layer <span class="context-menu-key">L</span></div>
+            <div class="context-menu-item" data-action="snap-point"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg></span> <span id="ctxSnapLabel">Snap to Grid</span> <span class="context-menu-key">Shift</span></div>
+            <div class="context-menu-item" data-action="persp-cycle"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="3" x2="3" y2="20"/><line x1="12" y1="3" x2="21" y2="20"/><circle cx="12" cy="3" r="1.5"/></svg></span> <span id="ctxPerspLabel">Perspective Snap</span></div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item" data-action="tool-line"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><line x1="5" y1="19" x2="19" y2="5"/><circle cx="5" cy="19" r="1.5"/><circle cx="19" cy="5" r="1.5"/></svg></span> Line Tool <span class="context-menu-key">Q</span></div>
+            <div class="context-menu-item" data-action="tool-curve"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="M4 18C8 6 16 6 20 18"/></svg></span> Curve Ramp <span class="context-menu-key">R</span></div>
+            <div class="context-menu-item" data-action="tool-eraser"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M5 11.5 12.5 19"/><path d="M22 21H7"/></svg></span> Eraser <span class="context-menu-key">E</span></div>
+            <div class="context-menu-item" data-action="tool-fill"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="M2 13h15"/><path d="M22 19a2 2 0 0 1-4 0c0-1.4 2-3.5 2-3.5s2 2.1 2 3.5Z"/></svg></span> Fill Area <span class="context-menu-key">F</span></div>
+            <div class="context-menu-item" data-action="tool-select"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" stroke-dasharray="4 3"/></svg></span> Box Select <span class="context-menu-key">S</span></div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item" data-action="fit-view"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span> Fit to View</div>
+            <div class="context-menu-item" data-action="toggle-zen"><span class="context-menu-icon"><svg class="mono-icon-sm" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></span> Zen Mode <span class="context-menu-key">\</span></div>
+        </div>
+
+        <!-- CANVAS MINI-MAP (RADAR VIEW) -->
+        <div id="minimapContainer" class="minimap-container">
+            <div class="minimap-header">
+                <span class="minimap-title">Radar View</span>
+                <div class="minimap-controls">
+                    <button id="minimapFitBtn" class="minimap-action-btn" title="Fit track in view">Fit</button>
+                    <button id="minimapToggleBtn" class="minimap-action-btn" title="Toggle Mini-Map (N)">−</button>
+                </div>
+            </div>
+            <canvas id="minimapCanvas" width="200" height="130"></canvas>
+            <div class="minimap-footer">
+                <span id="minimapPos">0, 0</span>
+                <span id="minimapLines">0 lines</span>
+            </div>
+        </div>
+
+        <div id="dropOverlay" class="drop-overlay" style="display:none;">
+            <div class="drop-overlay-box">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <h3>Drop Track File to Open</h3>
+                <p>.txt or .frhd track format</p>
+            </div>
+        </div>
+
+        <!-- PERMANENT STATUS BAR -->
+        <div id="statusBar" class="status-bar">
+            <div class="status-section status-left">
+                <button id="statusSidebarBtn" class="status-pill-btn" title="Toggle Sidebar ([)">Sidebar</button>
+                <span class="status-sep">|</span>
+                <span id="statusCoords" class="status-item mono">X: 0 &nbsp; Y: 0</span>
+                <span class="status-sep">|</span>
+                <span id="statusMeasure" class="status-item mono">Len: 0px &nbsp; ∠ 0°</span>
+                <span class="status-sep">|</span>
+                <span id="statusTool" class="status-item">Tool: Line (Q)</span>
+                <span class="status-sep">|</span>
+                <span id="statusLayer" class="status-item">Layer: Physics</span>
+            </div>
+            <div class="status-section status-center">
+                <span id="statusAutosave" class="status-item muted">Auto-save: Ready</span>
+            </div>
+            <div class="status-section status-right">
+                <span id="statusStats" class="status-item mono">Phys: 0 | Scen: 0</span>
+                <span class="status-sep">|</span>
+                <button id="statusAngleBtn" class="status-pill-btn" title="Cycle Angle Lock (Off / 15° / 45°)">Angle: Off</button>
+                <button id="statusPerspBtn" class="status-pill-btn" title="Cycle Perspective Snap (Off → Angle → Grid → No-Snap)">Persp: Off</button>
+                <button id="statusMinimapBtn" class="status-pill-btn" title="Toggle Mini-Map (N)">Radar</button>
+                <button id="statusZenBtn" class="status-pill-btn" title="Toggle Zen Focus Mode (\)">Zen</button>
+                <span class="status-sep">|</span>
+                <button id="statusZoomOut" class="status-zoom-btn" title="Zoom Out">−</button>
+                <span id="statusZoomVal" class="status-item mono status-zoom-val" title="Click to reset zoom (100%)">50%</span>
+                <button id="statusZoomIn" class="status-zoom-btn" title="Zoom In">+</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content woodblock-panel">
+            <span class="close" id="settingsClose">&times;</span>
+            <h2>Settings</h2>
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; cursor: pointer;">
+                <input type="checkbox" id="themeToggleCheckbox" style="width: auto; margin: 0;">
+                Dark Mode
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; cursor: pointer;">
+                <input type="checkbox" id="gridToggle" style="width: auto; margin: 0;">
+                Show Grid
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; cursor: pointer;">
+                <input type="checkbox" id="spawnDotToggle" checked style="width: auto; margin: 0;">
+                Show Spawn Point Dot (0, 0)
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; cursor: pointer;">
+                <input type="checkbox" id="minimapToggleCheckbox" checked style="width: auto; margin: 0;">
+                Show Radar View (Mini-Map)
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; cursor: pointer;">
+                <input type="checkbox" id="disableQuickAccessCheckbox" style="width: auto; margin: 0;">
+                Disable Quick Access Toolbar
+            </label>
+            <div class="param-row" style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                <label for="autoSaveIntervalSelect" style="white-space: nowrap; margin-bottom: 0;">Auto-Save Interval:</label>
+                <select id="autoSaveIntervalSelect" style="margin-bottom: 0; flex: 1; min-width: 0; padding: 5px 8px;">
+                    <option value="1">Every 1 minute</option>
+                    <option value="2" selected>Every 2 minutes</option>
+                    <option value="5">Every 5 minutes</option>
+                    <option value="10">Every 10 minutes</option>
+                    <option value="0">Disabled</option>
+                </select>
+            </div>
+
+            <div class="divider" style="margin: 15px 0;"></div>
+            <h3 style="margin-bottom: 8px;">Zen Mode Generator Actions</h3>
+            <p class="instruction-text" style="font-size: 0.75rem; margin-top: 0; margin-bottom: 10px;">
+                Toggle which 1-click generator &amp; optimizer actions appear in the floating toolbar:
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem;">
+                    <input type="checkbox" id="toggleHudCave" checked style="width: auto; margin: 0;">
+                    Cave Texture
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem;">
+                    <input type="checkbox" id="toggleHudCircle" checked style="width: auto; margin: 0;">
+                    Circle Texture
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem;">
+                    <input type="checkbox" id="toggleHudSmooth" checked style="width: auto; margin: 0;">
+                    Smooth Lines
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem;">
+                    <input type="checkbox" id="toggleHudFillGaps" checked style="width: auto; margin: 0;">
+                    Fill Gaps
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem;">
+                    <input type="checkbox" id="toggleHudReduce" checked style="width: auto; margin: 0;">
+                    Reduce Line Count
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem;">
+                    <input type="checkbox" id="toggleHudRollers" checked style="width: auto; margin: 0;">
+                    Line Generator
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem;">
+                    <input type="checkbox" id="toggleHudEdgeShadow" checked style="width: auto; margin: 0;">
+                    Edge Shadow
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.85rem;">
+                    <input type="checkbox" id="toggleHudRocks" checked style="width: auto; margin: 0;">
+                    Rock Cluster
+                </label>
+            </div>
+            
+            <div class="divider" style="margin: 15px 0;"></div>
+            <h3 style="margin-bottom: 10px;">Canvas Tools</h3>
+            
+            <div class="woodblock-inset" style="text-align: left; padding: 15px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px;">
+                    <label for="drawLayer" style="white-space: nowrap; margin-bottom: 0;">Draw Layer (L):</label> 
+                    <select id="drawLayer" style="margin-bottom: 0; flex: 1; min-width: 0; padding: 5px 8px;">
+                        <option value="physics">Physics</option>
+                        <option value="scenery">Scenery</option>
+                    </select>
+                </div>
+                
+                <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px; cursor: pointer;">
+                    <input type="checkbox" id="snapToGridToggle" style="width: auto; margin: 0;"> 
+                    Snap to Grid
+                </label>
+                
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px;">
+                    <label for="gridSizeSelect" style="white-space: nowrap; margin-bottom: 0;">Grid Size:</label> 
+                    <select id="gridSizeSelect" style="margin-bottom: 0; flex: 1; min-width: 0; padding: 5px 8px;">
+                        <option value="5">5 x 5</option>
+                        <option value="10" selected>10 x 10</option>
+                        <option value="25">25 x 25</option>
+                        <option value="50">50 x 50</option>
+                        <option value="100">100 x 100</option>
+                        <option value="200">200 x 200</option>
+                    </select>
+                </div>
+
+                <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px; cursor: pointer;">
+                    <input type="checkbox" id="symmetryToggle" style="width: auto; margin: 0;">
+                    Mirror on X-axis
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div id="helpModal" class="modal">
+        <div class="modal-content woodblock-panel" style="width: 480px; max-height: 80vh; overflow-y: auto;">
+            <span class="close" id="helpClose">&times;</span>
+            <h2>Shortcuts &amp; Tips</h2>
+            <div class="help-content">
+                <h3>Modes &amp; Drawing</h3>
+                <ul>
+                    <li><b>Manual Mode:</b> <b>Q</b> Line &nbsp; <b>W</b> Line+ &nbsp; <b>R</b> Curve &nbsp; <b>B</b> Bridge &nbsp; <b>A</b> Brush &nbsp; <b>E</b> Eraser &nbsp; <b>P</b> Polygon &nbsp; <b>O</b> Circle &nbsp; <b>U</b> Box</li>
+                    <li><b>Hybrid Mode:</b> <b>T</b> Tube &nbsp; <b>F</b> Fill &nbsp; <b>G</b> Gradient &nbsp; <b>X</b> Text</li>
+                    <li><b>Automation Mode:</b> Procedural Generators (incl. <b>Perspective Shadow</b>), Optimizer, Masks &amp; Image Vectorizer</li>
+                    <li><b>Tab</b> — Rotate Mode (Manual → Hybrid → Automation) &nbsp; <b>L</b> — Toggle Layer &nbsp; <b>N</b> — Radar View</li>
+                    <li><b>\</b> — Toggle Zen Focus Mode &nbsp; <b>[ / ]</b> — Eraser Radius (<b>Shift</b> ±10px)</li>
+                    <li><b>Middle Click / Space+Drag</b> — Pan camera &nbsp; <b>Shift</b> — Snap to vertex (or 15° angle lock away from vertices)</li>
+                    <li><b>Alt</b> (hold while drawing) — force solid line</li>
+                </ul>
+                <h3>Perspective Grid</h3>
+                <ul>
+                    <li>Configure in <b>Layers → Perspective Grid</b>: <b>1-Point</b>, <b>2-Point</b>, <b>3-Point</b>, or <b>Isometric</b></li>
+                    <li><b>Snap Modes:</b> <b>No-Snap</b>, <b>Grid-Snap</b> (rays/intersections), <b>Angle-Snap</b> (configurable cone + <b>Axis Lock</b>)</li>
+                    <li><b>Presets &amp; Follow Camera:</b> Built-in presets, custom Bookmarks, <b>Level</b> horizon, and camera-relative VPs</li>
+                    <li><b>Select Extrude / Array:</b> 3D Extrude &amp; 1/z Foreshortened Array toward VP1/VP2/VP3; perspective Fill &amp; Gradient hatching</li>
+                    <li><b>Edit VPs</b> — drag vanishing points on canvas (<b>Shift</b> levels horizon · <b>Esc</b> exits)</li>
+                    <li><b>Right-click → Perspective Snap</b> or status bar <b>Persp</b> pill — cycle perspective snap modes</li>
+                </ul>
+                <h3>Line Patterns</h3>
+                <ul>
+                    <li><b>Solid</b>, <b>Dashes</b>, <b>Dots</b>, or <b>Noisy</b> — applies to Line, Line+, Brush, Polygon, Circle and Fill</li>
+                    <li><b>Min Stroke Length</b> — reject whole strokes shorter than N units</li>
+                    <li><b>Point Spacing</b> (Brush only) — minimum distance between recorded points</li>
+                    <li><b>Pattern Scale</b> — multiplies dash/gap/noise clump sizes</li>
+                    <li><b>Noise Coverage</b> — 0% = nothing, 50% = half on, 100% = solid</li>
+                    <li>Patterns are <b>baked in at draw time</b> — no un-dashing or re-randomizing after</li>
+                </ul>
+                <h3>Select Tool</h3>
+                <ul>
+                    <li><b>S</b> or <b>V</b> — Select tool</li>
+                    <li>Drag to draw box — selects clipped fragments</li>
+                    <li><b>Ctrl/Cmd+drag</b> — add another box</li>
+                    <li><b>Shift+drag</b> — subtract a box</li>
+                    <li>Click empty canvas — clear selection</li>
+                    <li><b>Delete / Backspace</b> — delete selection</li>
+                    <li><b>Ctrl+C / Ctrl+V</b> — copy / paste selection</li>
+                    <li><b>Esc</b> — clear selection / cancel placement</li>
+                </ul>
+                <h3>Modify Tool</h3>
+                <ul>
+                    <li><b>M</b> — Modify tool</li>
+                    <li>Click a vertex to select, drag to move</li>
+                    <li><b>Delete / Backspace</b> — remove selected vertex</li>
+                </ul>
+                <h3>Global</h3>
+                <ul>
+                    <li><b>Ctrl/Cmd + Z</b> Undo &nbsp; <b>Ctrl/Cmd + Shift + Z / Y</b> Redo</li>
+                    <li><b>Ctrl + [</b> Toggle Sidebar Collapse (Slim Icon Strip)</li>
+                    <li><b>Right-Click</b> Context Menu for quick actions</li>
+                    <li><b>?</b> / <b>F1</b> — This help</li>
+                    <li>Scroll — Zoom</li>
+                </ul>
+                <h3>Objects</h3>
+                <ul>
+                    <li>Save a selection as a reusable object via the Select tool panel</li>
+                    <li>Open the <b>Objects</b> button in the header to browse / insert</li>
+                    <li>Click <b>Insert</b> on an object — a ghost follows your cursor</li>
+                    <li>Click canvas to place — <b>Esc</b> / right-click cancels</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="objectsModal" class="modal">
+        <div class="modal-content woodblock-panel" style="width: 760px; max-height: 85vh; overflow-y: auto;">
+            <span class="close" id="objectsClose">&times;</span>
+            <h2>Object Database</h2>
+            <div class="obj-toolbar">
+                <input type="text" id="objSearch" placeholder="Search by name…">
+                <select id="objLayerFilter">
+                    <option value="">All Layers</option>
+                    <option value="physics">Physics only</option>
+                    <option value="scenery">Scenery only</option>
+                    <option value="mixed">Mixed</option>
+                </select>
+                <input type="text" id="objTagFilter" placeholder="Tag filter…">
+                <button id="objViewToggle" class="icon-btn" title="Toggle Grid/List view">Grid</button>
+            </div>
+            <div class="obj-db-info">
+                <span><b id="objCount">0</b> objects</span>
+                <span>·</span>
+                <span>Storage: <b id="objSize">0 KB</b></span>
+                <span style="flex-grow: 1;"></span>
+                <button id="objImportBtn" class="icon-btn">Import</button>
+                <button id="objExportAllBtn" class="icon-btn">Export All</button>
+                <button id="objClearAllBtn" class="danger-btn" style="width:auto; padding:4px 10px; font-size:0.7rem;">Clear All</button>
+                <input type="file" id="objImportInput" accept=".json" style="display:none;">
+            </div>
+            <div id="objList" class="obj-list grid"></div>
+        </div>
+    </div>
+
+    <!-- SAVE AS OBJECT MODAL -->
+    <div id="saveObjectModal" class="modal">
+        <div class="modal-content woodblock-panel" style="width: 440px;">
+            <span class="close" id="saveObjectClose">&times;</span>
+            <h2 style="margin-top:0;">Save As Object</h2>
+            <p id="saveObjectStats" class="mono-text" style="font-size:0.8rem; margin-bottom:12px; color:var(--text-muted);"></p>
+            <label for="saveObjectNameInput" style="font-size:0.85rem; font-weight:700;">Object Name:</label>
+            <input type="text" id="saveObjectNameInput" placeholder="e.g. Loop-de-loop" style="margin-bottom:12px;" maxlength="60">
+            <label for="saveObjectTagsInput" style="font-size:0.85rem; font-weight:700;">Tags (comma-separated, optional):</label>
+            <input type="text" id="saveObjectTagsInput" placeholder="e.g. ramp, stunt, loop" style="margin-bottom:16px;">
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button id="saveObjectCancelBtn" class="primary-btn" style="flex:1;">Cancel</button>
+                <button id="saveObjectConfirmBtn" class="accent-btn" style="flex:1;">Save Object</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="script.js?v=12"></script>
+</body>
+</html>

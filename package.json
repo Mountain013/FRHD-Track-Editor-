@@ -1,0 +1,106 @@
+{
+  "name": "track-studio",
+  "productName": "Track Studio",
+  "version": "1.0.0",
+  "description": "Cross-platform desktop editor and procedural generator for Free Rider HD tracks",
+  "main": "main.js",
+  "author": "Track Studio Contributors",
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux",
+    "dist:all": "electron-builder -mwl"
+  },
+  "build": {
+    "appId": "com.trackstudio.app",
+    "productName": "Track Studio",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!dist/**/*",
+      "!*.log",
+      "!node_modules/**/*.md",
+      "!node_modules/**/*.ts",
+      "!node_modules/**/*.map"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "assets/icon.ico",
+      "fileAssociations": [
+        {
+          "ext": "txt",
+          "name": "Free Rider HD Track",
+          "role": "Editor"
+        },
+        {
+          "ext": "frhd",
+          "name": "Free Rider HD Track",
+          "role": "Editor"
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Track Studio"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.graphics-design",
+      "icon": "assets/icon.png",
+      "fileAssociations": [
+        {
+          "ext": "txt",
+          "name": "Free Rider HD Track",
+          "role": "Editor"
+        },
+        {
+          "ext": "frhd",
+          "name": "Free Rider HD Track",
+          "role": "Editor"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "tar.gz"
+      ],
+      "category": "Graphics",
+      "icon": "assets/icon.png",
+      "fileAssociations": [
+        {
+          "ext": "txt",
+          "name": "Free Rider HD Track",
+          "role": "Editor"
+        },
+        {
+          "ext": "frhd",
+          "name": "Free Rider HD Track",
+          "role": "Editor"
+        }
+      ]
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0"
+  }
+}

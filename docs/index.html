@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Studio — Free Rider HD Track Creator & Procedural Studio</title>
+    <meta name="description" content="Download Track Studio, the ultimate cross-platform desktop editor and procedural generator for Free Rider HD tracks.">
+    <link rel="icon" type="image/png" href="screenshots/hero_preview.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header / Nav -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand">
+                <span class="brand-logo">▲</span>
+                <span class="brand-name">TRACK STUDIO</span>
+                <span class="brand-badge">v1.0.0</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#generators">Generators</a>
+                <a href="#shortcuts">Shortcuts</a>
+                <a href="https://github.com/Mountain013/FRHD-Trak-Editor" target="_blank" rel="noopener" class="nav-github">
+                    <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    GitHub
+                </a>
+                <a href="#download" class="btn-nav-download">Download</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="download">
+        <div class="hero-container">
+            <div class="hero-tag">
+                <span class="hero-tag-pulse"></span>
+                Official Desktop Release v1.0.0
+            </div>
+            <h1 class="hero-title">Precision Track Design for <span>Free Rider HD</span></h1>
+            <p class="hero-subtitle">
+                A modern, standalone desktop workstation. Draft buttery-smooth Bézier curves, generate organic curved rock massifs, weld invisible sub-pixel cracks, and sculpt multi-layer physics and scenery natively.
+            </p>
+
+            <div class="download-card">
+                <div class="download-buttons">
+                    <a href="https://github.com/Mountain013/FRHD-Trak-Editor/releases/download/v1.0.0/Track.Studio.1.0.0.exe" class="btn-primary" id="portableBtn">
+                        <svg class="btn-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <div class="btn-text">
+                            <span class="btn-label">Download Portable (.exe)</span>
+                            <span class="btn-sub">v1.0.0 · Standalone · Single File (~110 MB)</span>
+                        </div>
+                    </a>
+
+                    <a href="https://github.com/Mountain013/FRHD-Trak-Editor/releases/download/v1.0.0/Track.Studio.Setup.1.0.0.exe" class="btn-secondary" id="setupBtn">
+                        <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                        <div class="btn-text">
+                            <span class="btn-label">Download Setup Installer (.exe)</span>
+                            <span class="btn-sub">Standard Windows Installer (~121 MB)</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="download-meta">
+                    <span>✓ Windows 10 & 11 (64-bit)</span>
+                    <span>✓ No installation required for Portable</span>
+                    <span>✓ 100% Offline & Open Source</span>
+                    <span>✓ Fast Local Auto-Save</span>
+                </div>
+            </div>
+
+            <div class="hero-screenshot-frame">
+                <div class="browser-bar">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="browser-title">Track Studio 1.0.0 — Hybrid Whaleback & Spline Outcrops</span>
+                </div>
+                <img src="screenshots/hero_preview.png" alt="Track Studio Desktop Interface with Whaleback Rock Generator" class="hero-image">
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Features Grid -->
+    <section class="features" id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-badge">BUILT FOR SPEED & DETAIL</span>
+                <h2>Craft Masterpiece Tracks in Record Time</h2>
+                <p>Equipped with specialized drafting tools, intelligent procedural synthesis, and line optimization.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🏔️</div>
+                    <h3>Organic Rock Formations</h3>
+                    <p>Procedural rock cluster generator with 5 distinct curved, non-circular styles: Whaleback & Splines, Asymmetric Lamé Superellipses, Roche Moutonnée, Multi-Harmonic Polar Cam, and 3D Crease toggles.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📐</div>
+                    <h3>Interactive Bézier Ramps</h3>
+                    <p>Draft natural transitions and launching kickers with the 3-point quadratic curve tool. Real-time apex guide with configurable segment resolution (4 to 64 segments).</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Track Optimizer Suite</h3>
+                    <p>Ramer-Douglas-Peucker line simplifier to slash track filesize, plus an intelligent Gap Welder that seals sub-pixel cracks to prevent the bike from snagging.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎛️</div>
+                    <h3>Dual Layer Management</h3>
+                    <p>Independent visibility and lock toggles for Physics and Scenery layers. Includes scenery opacity ghosting (10% to 100%) so you can draft rideable lines over background art.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Radar Minimap & Zen Mode</h3>
+                    <p>Interactive viewport minimap in the corner—click or drag to jump anywhere in giant tracks instantly. Press <code>\</code> for Zen mode to collapse all sidebars for pure drafting.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Local Auto-Save & Recovery</h3>
+                    <p>Persistent auto-save daemon that prevents lost progress. If your computer reboots or crashes, Track Studio immediately offers one-click draft recovery on launch.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rock Generator Showcase -->
+    <section class="generators-showcase" id="generators">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-badge">GEOLOGICAL PROCEDURAL GENERATION</span>
+                <h2>5 Authentic Curved Rock Modes</h2>
+                <p>Natural mountain contours with varying curvature, asymmetric whaleback ramps, and zero circular bubbles.</p>
+            </div>
+
+            <div class="modes-grid">
+                <div class="mode-card">
+                    <img src="screenshots/hero_preview.png" alt="Whaleback & Spline Mode" class="mode-img">
+                    <div class="mode-content">
+                        <h4>1. Hybrid Whaleback & Spline</h4>
+                        <p>Glaciated stoss ramps curving smoothly into asymmetric crowns and eroded concave hollows. Features broad horizon bedrock platforms.</p>
+                    </div>
+                </div>
+
+                <div class="mode-card">
+                    <img src="screenshots/rock_lame_mode.png" alt="Asymmetric Lamé Superellipses" class="mode-img">
+                    <div class="mode-content">
+                        <h4>2. Asymmetric Lamé Superellipses</h4>
+                        <p>Mathematical power curves with flattened crowns and steep shear flanks. Forms monolithic rounded loaf crags and peaked massifs.</p>
+                    </div>
+                </div>
+
+                <div class="mode-card">
+                    <img src="screenshots/rock_whaleback_mode.png" alt="Glaciated Roche Moutonnée" class="mode-img">
+                    <div class="mode-content">
+                        <h4>3. Glaciated Roche Moutonnée</h4>
+                        <p>Long 20° sweeping inclines flowing over rounded crests and plunging down terraced lee benches, mimicking ancient glaciated granite.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shortcuts Table -->
+    <section class="shortcuts" id="shortcuts">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-badge">KEYBOARD ACCELERATORS</span>
+                <h2>Fluid Drafting at Your Fingertips</h2>
+            </div>
+
+            <div class="shortcuts-table-wrapper">
+                <table class="shortcuts-table">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Action</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><kbd>Q</kbd></td><td>Line Tool</td><td>Basic drafting segment</td></tr>
+                        <tr><td><kbd>W</kbd></td><td>Line+ Tool</td><td>Continuous polyline drafting</td></tr>
+                        <tr><td><kbd>R</kbd></td><td>Curve Tool</td><td>3-point quadratic Bézier ramp</td></tr>
+                        <tr><td><kbd>E</kbd></td><td>Eraser</td><td>Segment & stroke deletion</td></tr>
+                        <tr><td><kbd>L</kbd></td><td>Toggle Layer</td><td>Switch between Physics & Scenery</td></tr>
+                        <tr><td><kbd>N</kbd></td><td>Minimap Toggle</td><td>Show / hide radar overview</td></tr>
+                        <tr><td><kbd>\</kbd></td><td>Zen Mode</td><td>Collapse sidebar to maximize drawing canvas</td></tr>
+                        <tr><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td><td>Quick Save</td><td>Export track directly to disk</td></tr>
+                        <tr><td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td><td>Undo</td><td>Multi-level undo history</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom Download CTA -->
+    <section class="cta-banner">
+        <div class="section-container cta-content">
+            <h2>Ready to Build Your Next Masterpiece?</h2>
+            <p>Download Track Studio for Windows and start creating today.</p>
+            <div class="cta-actions">
+                <a href="https://github.com/Mountain013/FRHD-Trak-Editor/releases/download/v1.0.0/Track.Studio.1.0.0.exe" class="btn-primary">
+                    Download Portable .exe (v1.0.0)
+                </a>
+                <a href="https://github.com/Mountain013/FRHD-Trak-Editor" target="_blank" rel="noopener" class="btn-outline">
+                    View GitHub Repository
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <span class="brand-logo">▲</span>
+                <span class="footer-text">Track Studio is an open-source creation tool for the Free Rider HD community.</span>
+            </div>
+            <div class="footer-right">
+                <a href="https://github.com/Mountain013/FRHD-Trak-Editor" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://github.com/Mountain013/FRHD-Trak-Editor/releases" target="_blank" rel="noopener">Releases</a>
+                <a href="https://github.com/Mountain013/FRHD-Trak-Editor/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
