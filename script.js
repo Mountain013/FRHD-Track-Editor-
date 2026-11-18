@@ -5735,8 +5735,9 @@ const scriptConfig = {
         name: "Rock Cluster Generator",
         params: {
             genType: {
-                type: "select", value: "whalebackSpline", label: "Rock Formation Style",
+                type: "select", value: "weatheredGranite", label: "Rock Formation Style",
                 options: [
+                    { value: "weatheredGranite", label: "Weathered Granite (Reference Match: Spires, Slabs & Monoliths)" },
                     { value: "whalebackSpline", label: "Hybrid Whaleback & Spline (Curved Ramps & Asymmetric Domes)" },
                     { value: "splineCurvature", label: "Compound Bezier Splines (Inflected Curves & Varying Curvature)" },
                     { value: "asymmLame", label: "Asymmetric Superellipses (Lamé Power Curves)" },
@@ -5745,12 +5746,12 @@ const scriptConfig = {
                     { value: "harmonicField", label: "Harmonic Topographic Field (Continuous Ridge)" }
                 ]
             },
-            rockCount: { type: "range", min: 10, max: 120, step: 5, value: 45, label: "Rock Count" },
+            rockCount: { type: "range", min: 10, max: 120, step: 5, value: 48, label: "Rock Count" },
             clusterWidth: { type: "range", min: 300, max: 3000, step: 50, value: 1200, label: "Cluster Width (px)" },
-            peakHeight: { type: "range", min: 50, max: 600, step: 10, value: 240, label: "Peak Height (px)" },
-            roughness: { type: "range", min: 0, max: 1, step: 0.05, value: 0.4, label: "Rock Roughness" },
+            peakHeight: { type: "range", min: 50, max: 600, step: 10, value: 260, label: "Peak Height (px)" },
+            roughness: { type: "range", min: 0, max: 1, step: 0.05, value: 0.35, label: "Rock Roughness" },
             pebbleRatio: { type: "range", min: 0, max: 80, step: 5, value: 0, label: "Pebble / Scree (%)" },
-            creases: { type: "checkbox", value: true, label: "3D Facets & Creases" },
+            creases: { type: "checkbox", value: false, label: "3D Facets & Creases" },
             layerTarget: {
                 type: "select", value: "scenery", label: "Target Layer",
                 options: [
@@ -7062,6 +7063,138 @@ function sampleSpline(pts, numSamples) {
     return out;
 }
 
+// Reference-Match Archetype Generator: Weathered Granite (Spires, Slabs, Leaning Blocks, Pillows)
+function genWeatheredGraniteRock(center, rx, ry, archetype, roughness, groundY, rng, enableCreases) {
+    const dir = rng() > 0.5 ? 1 : -1;
+    let hull = [];
+    let crease = null;
+
+    if (archetype === 'spire') {
+        // 1. Tall vertical monolith / spire / pinnacle (like the prominent peak next to biker)
+        const bL = { x: center.x - rx * (0.85 + rng() * 0.15), y: groundY + 5 };
+        const lowShoulder = {
+            x: center.x - dir * rx * (0.62 + rng() * 0.12),
+            y: center.y - ry * (0.22 + rng() * 0.10)
+        };
+        const midRamp = {
+            x: center.x - dir * rx * (0.30 + rng() * 0.10),
+            y: center.y - ry * (0.60 + rng() * 0.10)
+        };
+        const crownW = Math.max(6, rx * (0.18 + rng() * 0.06));
+        const apexX = center.x + dir * rx * (0.05 + rng() * 0.15);
+        const apexY = center.y - ry * (1.00 + rng() * 0.08);
+        const apexL = { x: apexX - crownW, y: apexY + 3 };
+        const apex = { x: apexX, y: apexY };
+        const apexR = { x: apexX + crownW, y: apexY + 3 };
+        const highShoulder = {
+            x: center.x + dir * rx * (0.32 + rng() * 0.10),
+            y: center.y - ry * (0.58 + rng() * 0.10)
+        };
+        const lowHip = {
+            x: center.x + dir * rx * (0.65 + rng() * 0.12),
+            y: center.y - ry * (0.24 + rng() * 0.10)
+        };
+        const bR = { x: center.x + rx * (0.85 + rng() * 0.15), y: groundY + 5 };
+
+        let keyPts = dir === 1
+            ? [bL, lowShoulder, midRamp, apexL, apex, apexR, highShoulder, lowHip, bR]
+            : [bL, lowHip, highShoulder, apexL, apex, apexR, midRamp, lowShoulder, bR];
+
+        const splinePts = sampleSpline(keyPts, 32);
+        splinePts.push({ x: splinePts[0].x, y: splinePts[0].y });
+        hull = sliceAndSealGroundPolygon(splinePts, groundY, 'filletFlat', 12 + rng() * 6);
+
+        if (enableCreases && rng() > 0.45) {
+            crease = sampleSpline([
+                { x: apex.x, y: apex.y },
+                { x: apex.x - dir * 10, y: center.y - ry * 0.3 },
+                { x: apex.x - dir * 18, y: groundY }
+            ], 10);
+        }
+    } else if (archetype === 'flatSlab') {
+        // 2. Broad, low-profile horizontal shelf / slab (stepping ledges and foundation)
+        const topTilt = (rng() - 0.5) * ry * 0.12;
+        const bL = { x: center.x - rx * (0.95 + rng() * 0.05), y: groundY + 5 };
+        const shoulderL = { x: center.x - rx * 0.90, y: center.y - ry * 0.82 };
+        const topL = { x: center.x - rx * 0.48, y: center.y - ry * 0.95 + topTilt };
+        const topMid = { x: center.x, y: center.y - ry * 0.98 };
+        const topR = { x: center.x + rx * 0.48, y: center.y - ry * 0.95 - topTilt };
+        const shoulderR = { x: center.x + rx * 0.90, y: center.y - ry * 0.80 };
+        const bR = { x: center.x + rx * (0.95 + rng() * 0.05), y: groundY + 5 };
+
+        const splinePts = sampleSpline([bL, shoulderL, topL, topMid, topR, shoulderR, bR], 30);
+        splinePts.push({ x: splinePts[0].x, y: splinePts[0].y });
+        hull = sliceAndSealGroundPolygon(splinePts, groundY, 'filletFlat', 12 + rng() * 6);
+
+        if (enableCreases && rng() > 0.5) {
+            crease = sampleSpline([
+                { x: shoulderL.x + 8, y: shoulderL.y },
+                { x: center.x, y: center.y - ry * 0.65 },
+                { x: shoulderR.x - 8, y: shoulderR.y }
+            ], 12);
+        }
+    } else if (archetype === 'leaningBlock') {
+        // 3. Tilted trapezoidal block with asymmetric shoulder (dominant in central massif)
+        const bL = { x: center.x - rx * (0.92 + rng() * 0.08), y: groundY + 5 };
+        const slopeStoss = { x: center.x - dir * rx * 0.55, y: center.y - ry * 0.35 };
+        const crownW = rx * (0.16 + rng() * 0.06);
+        const apexX = center.x - dir * rx * 0.16;
+        const apexY = center.y - ry * (1.00 + rng() * 0.08);
+        const highApexL = { x: apexX - crownW, y: apexY + 2 };
+        const highApex = { x: apexX, y: apexY };
+        const highApexR = { x: apexX + crownW, y: apexY + 2 };
+        const broadCrown = { x: center.x + dir * rx * 0.38, y: center.y - ry * (0.80 + rng() * 0.10) };
+        const steepDrop = { x: center.x + dir * rx * 0.78, y: center.y - ry * (0.30 + rng() * 0.12) };
+        const bR = { x: center.x + rx * (0.92 + rng() * 0.08), y: groundY + 5 };
+
+        let keyPts = dir === 1
+            ? [bL, slopeStoss, highApexL, highApex, highApexR, broadCrown, steepDrop, bR]
+            : [bL, steepDrop, broadCrown, highApexL, highApex, highApexR, slopeStoss, bR];
+
+        const splinePts = sampleSpline(keyPts, 28);
+        splinePts.push({ x: splinePts[0].x, y: splinePts[0].y });
+        hull = sliceAndSealGroundPolygon(splinePts, groundY, 'filletFlat', 12 + rng() * 6);
+
+        if (enableCreases && rng() > 0.5) {
+            crease = sampleSpline([
+                { x: highApex.x, y: highApex.y },
+                { x: highApex.x + dir * 12, y: center.y - ry * 0.25 },
+                { x: highApex.x + dir * 20, y: groundY }
+            ], 12);
+        }
+    } else {
+        // 4. pillowBoulder: sub-rectangular squircle boulder with softened corners
+        const nx = 2.4 + rng() * 0.6;
+        const ny = 2.6 + rng() * 0.8;
+        const verts = 28;
+        const pts = [];
+        for (let i = 0; i < verts; i++) {
+            const th = (i / verts) * Math.PI * 2;
+            const cosT = Math.cos(th), sinT = Math.sin(th);
+            const rNorm = Math.pow(
+                Math.pow(Math.abs(cosT), 2 / nx) + Math.pow(Math.abs(sinT), 2 / ny),
+                -0.5
+            );
+            const pert = 1.0 + roughness * 0.12 * Math.sin(3 * th + rng() * 2);
+            pts.push({
+                x: center.x + cosT * rx * rNorm * pert,
+                y: center.y + sinT * ry * rNorm * pert
+            });
+        }
+        pts.push({ x: pts[0].x, y: pts[0].y });
+        hull = sliceAndSealGroundPolygon(pts, groundY, 'filletFlat', 10 + rng() * 6);
+
+        if (enableCreases && rng() > 0.55) {
+            crease = [
+                { x: center.x - rx * 0.3, y: center.y - ry * 0.5 },
+                { x: center.x + rx * 0.2, y: center.y + ry * 0.1 }
+            ];
+        }
+    }
+
+    return { hull, crease };
+}
+
 // Mode 1: Compound Bezier Curvature Splines
 function genSplineCurvatureHull(center, rx, ry, roughness, groundY, rng, enableCreases) {
     const dir = rng() > 0.5 ? 1 : -1;
@@ -7451,7 +7584,136 @@ function runRockClusterGen(p, isPreview) {
 
     const rocks = [];
 
-    if (genType !== 'harmonicField') {
+    if (genType === 'weatheredGranite') {
+        // Reference Match Outcrop: Spires, Slabs, Leaning Blocks & Pillows
+        function getGraniteElevation(u) {
+            const spirePeak = Math.exp(-Math.pow((u - 0.23) / 0.05, 2)) * 0.92;
+            const centralPeak = Math.exp(-Math.pow((u - 0.52) / 0.16, 2)) * 1.05;
+            const rightShoulder = Math.exp(-Math.pow((u - 0.75) / 0.14, 2)) * 0.45;
+            const baseCurve = Math.sin(Math.PI * Math.max(0, Math.min(1, u))) * 0.35;
+            return Math.max(0.18, spirePeak + centralPeak + rightShoulder + baseCurve);
+        }
+
+        // 1. Foundation stratum: broad low-profile flat slabs along baseline (ground stones)
+        const foundationCount = Math.max(8, Math.round(clusterWidth / 120));
+        for (let i = 0; i < foundationCount; i++) {
+            const u = (i + 0.5 + (rng() - 0.5) * 0.30) / foundationCount;
+            const cx = xCenter + (u - 0.5) * clusterWidth * 0.98;
+            const rx = 75 + rng() * 40;
+            const ry = 16 + rng() * 8;
+            const cy = groundY - ry * 0.85;
+            const { hull, crease } = genWeatheredGraniteRock({ x: cx, y: cy }, rx, ry, 'flatSlab', roughness, groundY, rng, false);
+            rocks.push({ hull, crease, baseDepth: 3, cx, cy });
+        }
+
+        // 2. Tiers: background peaks, midground ridge massifs, foreground stepping ledges
+        const bgCount = Math.max(5, Math.round(rockCount * 0.22));
+        const midCount = Math.max(8, Math.round(rockCount * 0.38));
+        const fgCount = Math.max(10, Math.round(rockCount * 0.40));
+
+        // Background Peaks (Tier 0: depth 0)
+        for (let i = 0; i < bgCount; i++) {
+            const u = (i + 0.5 + (rng() - 0.5) * 0.35) / bgCount;
+            const cx = xCenter + (u - 0.5) * clusterWidth * 0.94;
+            const macroH = peakHeight * getGraniteElevation(u);
+            const pH = macroH * (0.95 + rng() * 0.25);
+
+            let arch = 'leaningBlock';
+            let rx = 50 + rng() * 20;
+            let ry = pH * 0.42;
+
+            // Spire zone on left flank (near u = 0.23)
+            if (Math.abs(u - 0.23) < 0.08) {
+                arch = 'spire';
+                rx = 32 + rng() * 10;
+                ry = pH * (0.42 + rng() * 0.08);
+            } else if (Math.abs(u - 0.52) < 0.10 && rng() > 0.4) {
+                arch = 'spire';
+                rx = 38 + rng() * 12;
+                ry = pH * (0.40 + rng() * 0.08);
+            } else if (rng() > 0.55) {
+                arch = 'pillowBoulder';
+                rx = 52 + rng() * 20;
+                ry = pH * 0.40;
+            }
+
+            const cy = groundY - ry * 0.95;
+            const { hull, crease } = genWeatheredGraniteRock({ x: cx, y: cy }, rx, ry, arch, roughness, groundY, rng, enableCreases);
+            rocks.push({ hull, crease, baseDepth: 0, cx, cy });
+        }
+
+        // Midground Ridge (Tier 1: depth 1)
+        for (let i = 0; i < midCount; i++) {
+            const u = (i + 0.5 + (rng() - 0.5) * 0.35) / midCount;
+            const cx = xCenter + (u - 0.5) * clusterWidth * 0.94;
+            const macroH = peakHeight * getGraniteElevation(u) * 0.78;
+            const pH = macroH * (0.85 + rng() * 0.25);
+
+            let arch = 'leaningBlock';
+            let rx = 48 + rng() * 25;
+            let ry = pH * 0.38;
+
+            // Bike saddle shelf zone near u = 0.31
+            if (Math.abs(u - 0.31) < 0.07) {
+                arch = 'flatSlab';
+                rx = 70 + rng() * 25;
+                ry = 26 + rng() * 10;
+            } else if (u > 0.68) {
+                arch = rng() > 0.4 ? 'pillowBoulder' : 'leaningBlock';
+                rx = 42 + rng() * 20;
+                ry = pH * 0.35;
+            } else if (rng() > 0.5) {
+                arch = 'flatSlab';
+                rx = 65 + rng() * 25;
+                ry = pH * 0.32;
+            }
+
+            const cy = groundY - ry * 0.95;
+            const { hull, crease } = genWeatheredGraniteRock({ x: cx, y: cy }, rx, ry, arch, roughness, groundY, rng, enableCreases);
+            rocks.push({ hull, crease, baseDepth: 1, cx, cy });
+        }
+
+        // Foreground Ledges & Interlocking Front Blocks (Tier 2: depth 2)
+        for (let i = 0; i < fgCount; i++) {
+            const u = (i + 0.5 + (rng() - 0.5) * 0.35) / fgCount;
+            const cx = xCenter + (u - 0.5) * clusterWidth * 0.96;
+            const macroH = peakHeight * getGraniteElevation(u) * 0.52;
+            const pH = macroH * (0.85 + rng() * 0.25);
+
+            const roll = rng();
+            let arch = 'flatSlab';
+            let rx = 58 + rng() * 25;
+            let ry = Math.max(18, pH * 0.32);
+
+            if (roll > 0.65) {
+                arch = 'pillowBoulder';
+                rx = 38 + rng() * 18;
+                ry = Math.max(20, pH * 0.35);
+            } else if (roll > 0.35) {
+                arch = 'leaningBlock';
+                rx = 45 + rng() * 20;
+                ry = Math.max(22, pH * 0.38);
+            }
+
+            const cy = groundY - ry * 0.95;
+            const { hull, crease } = genWeatheredGraniteRock({ x: cx, y: cy }, rx, ry, arch, roughness, groundY, rng, enableCreases);
+            rocks.push({ hull, crease, baseDepth: 2, cx, cy });
+        }
+
+        // Scree / minor base stones (only if pebbleRatio > 0)
+        if (pebbleRatio > 0.05) {
+            const numScree = Math.max(4, Math.round(rockCount * pebbleRatio));
+            for (let i = 0; i < numScree; i++) {
+                const u = (i + 0.5 + (rng() - 0.5) * 0.40) / numScree;
+                const cx = xCenter + (u - 0.5) * clusterWidth * 0.98;
+                const rx = 14 + rng() * 12;
+                const ry = 8 + rng() * 6;
+                const cy = groundY - ry * 0.85;
+                const { hull, crease } = genWeatheredGraniteRock({ x: cx, y: cy }, rx, ry, 'pillowBoulder', roughness, groundY, rng, false);
+                rocks.push({ hull, crease, baseDepth: 4, cx, cy });
+            }
+        }
+    } else if (genType !== 'harmonicField') {
         const phi1 = rng() * Math.PI * 2;
         const phi2 = rng() * Math.PI * 2;
         function getElevation(u) {
